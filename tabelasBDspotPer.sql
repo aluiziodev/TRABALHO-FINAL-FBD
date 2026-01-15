@@ -1,3 +1,5 @@
+CREATE DATABASE BDSpotPer
+
 CREATE TABLE gravadora
 (
 cod_grvd SMALLINT NOT NULL,
@@ -95,7 +97,7 @@ CONSTRAINT PK_cod_tipcomp PRIMARY KEY (cod_tipcomp)
 CREATE TABLE faixa (
 
 num_faixa_alb SMALLINT NOT NULL,
-descriçao VARCHAR(100) NOT NULL,
+descriÃ§ao VARCHAR(100) NOT NULL,
 temp_exec SMALLINT,
 tipo_grav VARCHAR(3),
 alb_faixa SMALLINT NOT NULL,
@@ -158,4 +160,5 @@ cod_comp SMALLINT NOT NULL,
 CONSTRAINT PK_cf_comp_faixa PRIMARY KEY (cod_comp, num_faixa_alb, alb_faixa),
 CONSTRAINT FK_cf_cod_comp FOREIGN KEY (cod_comp) REFERENCES compositor (cod_comp),
 CONSTRAINT FK_cf_faixa FOREIGN KEY (num_faixa_alb, alb_faixa) REFERENCES faixa (num_faixa_alb, alb_faixa)
+
 );
