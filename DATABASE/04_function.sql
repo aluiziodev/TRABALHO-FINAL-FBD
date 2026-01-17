@@ -1,3 +1,6 @@
+USE BDSpotPer;
+GO
+
 CREATE FUNCTION function_albuns_compositor 
 ( @nome_comp VARCHAR(100) )
 
