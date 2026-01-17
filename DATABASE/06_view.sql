@@ -1,3 +1,5 @@
+USE BDSpotPer;
+GO
 
 CREATE VIEW dbo.vw_playlist_qtd_albuns
 WITH SCHEMABINDING
