@@ -6,9 +6,10 @@ ON faixa
 AFTER INSERT, UPDATE
 AS
 BEGIN
-    IF EXISTS ( 
-        SELECT *
-        FROM inserted i JOIN compositor_faixa cf
+    IF EXISTS (
+    SELECT *
+    FROM inserted i
+        JOIN compositor_faixa cf
         ON i.num_faixa_alb = cf.num_faixa_alb
             AND i.alb_faixa = cf.alb_faixa
         JOIN compositor c
@@ -28,9 +29,11 @@ ON faixa
 AFTER INSERT, UPDATE
 AS
 BEGIN
-    IF EXISTS( 
-        SELECT *
-    FROM faixa f JOIN inserted i ON f.alb_faixa = i.alb_faixa
+    IF EXISTS(
+    SELECT *
+    FROM faixa f
+        JOIN inserted i
+        ON f.alb_faixa = i.alb_faixa
     GROUP BY i.alb_faixa
     HAVING COUNT(*) > 64
 )
@@ -54,9 +57,9 @@ BEGIN
     SELECT @media_fullddd = AVG(a.preco_compra)
     FROM Album a
     WHERE NOT EXISTS (
-        SELECT *
+    SELECT *
     FROM Faixa f
-    WHERE f.album = a.cod_alb
+    WHERE f.alb_faixa = a.cod_alb
         AND (f.tipo_grav IS NULL OR f.tipo_grav <> 'DDD')
     );
 
@@ -64,12 +67,51 @@ BEGIN
         RETURN;
 
     IF EXISTS (
-        SELECT *
+    SELECT *
     FROM inserted i
     WHERE i.preco_compra > 3 * @media_fullddd
     )
     BEGIN
         RAISERROR ('O preço de compra de um álbum não pode ser superior a três vezes a média do preço de álbuns com todas as faixas DDD.', 16, 1);
+        ROLLBACK TRANSACTION;
+    END
+END;
+GO
+
+CREATE TRIGGER trg_valida_tipograv
+ON faixa
+AFTER INSERT, UPDATE
+AS
+BEGIN
+    IF EXISTS(
+    SELECT *
+    FROM inserted i
+        JOIN album a
+        ON i.alb_faixa = a.cod_alb
+    WHERE (a.meio_fis in ('DOWNLOAD', 'VINIL') AND (i.tipo_grav IS NOT NULL))
+        OR (a.meio_fis = 'CD' AND (i.tipo_grav IS NULL OR i.tipo_grav NOT IN ('ADD', 'DDD')))
+)
+BEGIN
+        RAISERROR('Tipo de gravação inválido conforme o meio físico do álbum.', 16, 1);
+        ROLLBACK TRANSACTION;
+    END
+END;
+GO
+
+CREATE TRIGGER trg_valida_numdisc_alb
+ON faixa
+AFTER INSERT, UPDATE
+AS
+BEGIN
+    IF EXISTS (
+    SELECT *
+    FROM inserted i
+        JOIN album a
+        ON i.alb_faixa = a.cod_alb
+    WHERE (a.meio_fis = 'DOWNLOAD' AND i.num_disc_alb <> 0)
+        OR (a.meio_fis IN ('CD', 'VINIL') AND i.num_disc_alb <= 0))
+BEGIN
+        RAISERROR('Número do disco do álbum inválido conforme o meio físico do álbum.', 16, 1);
         ROLLBACK TRANSACTION;
     END
 END;
