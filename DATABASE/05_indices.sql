@@ -1,3 +1,6 @@
+USE BDSpotPer;
+GO
+
 CREATE NONCLUSTERED INDEX idx_faixa_album
 ON faixa (alb_faixa)
 WITH (FILLFACTOR = 100)
