@@ -1,4 +1,4 @@
-USE BDSpotPer
+
 GO
 
 CREATE TRIGGER trg_check_barroco_DDD
@@ -54,7 +54,7 @@ AS
 BEGIN
     DECLARE @media_fullddd DECIMAL(10,2);
 
-    SELECT @media_fullddd = AVG(a.preco_compra)
+    SELECT @media_fullddd = AVG(a.preco_alb)
     FROM Album a
     WHERE NOT EXISTS (
     SELECT *
@@ -69,7 +69,7 @@ BEGIN
     IF EXISTS (
     SELECT *
     FROM inserted i
-    WHERE i.preco_compra > 3 * @media_fullddd
+    WHERE i.preco_alb > 3 * @media_fullddd
     )
     BEGIN
         RAISERROR ('O preço de compra de um álbum não pode ser superior a três vezes a média do preço de álbuns com todas as faixas DDD.', 16, 1);
@@ -114,5 +114,33 @@ BEGIN
         RAISERROR('Número do disco do álbum inválido conforme o meio físico do álbum.', 16, 1);
         ROLLBACK TRANSACTION;
     END
+END;
+GO
+
+CREATE TRIGGER trg_faixa_playlist_atualiza_tempo
+ON faixa_playlist
+AFTER INSERT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    UPDATE p
+    SET p.temp_exec = p.temp_exec + t.soma_tempo
+    FROM playlist p
+    JOIN (
+        SELECT
+            i.cod_play,
+            SUM(f.temp_exec) AS soma_tempo
+        FROM inserted i
+        JOIN faixa f
+            ON f.num_faixa_alb = i.num_faixa_alb
+           AND f.alb_faixa     = i.alb_faixa
+           AND (
+                (f.num_disc_alb = i.num_disc_alb)
+                OR (f.num_disc_alb IS NULL AND i.num_disc_alb IS NULL)
+           )
+        GROUP BY i.cod_play
+    ) t
+        ON p.cod_play = t.cod_play;
 END;
 GO
