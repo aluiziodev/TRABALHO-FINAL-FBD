@@ -105,6 +105,7 @@ CREATE TABLE faixa
 (
 
     num_faixa_alb SMALLINT NOT NULL,
+    num_disc_alb SMALLINT NOT NULL,
     descriçao VARCHAR(100) NOT NULL,
     temp_exec SMALLINT,
     tipo_grav VARCHAR(3),
@@ -112,7 +113,7 @@ CREATE TABLE faixa
     tipo_comp SMALLINT NOT NULL,
 
 
-    CONSTRAINT PK_faixa PRIMARY KEY (num_faixa_alb, alb_faixa),
+    CONSTRAINT PK_faixa PRIMARY KEY (num_faixa_alb, alb_faixa, num_disc_alb),
     CONSTRAINT FK_faixa_alb FOREIGN KEY (alb_faixa) REFERENCES album (cod_alb) ON DELETE CASCADE,
     CONSTRAINT FK_tipo_comp FOREIGN KEY (tipo_comp) REFERENCES tipo_composicao (cod_tipcomp),
     CONSTRAINT CK_exec CHECK (temp_exec > 0),
