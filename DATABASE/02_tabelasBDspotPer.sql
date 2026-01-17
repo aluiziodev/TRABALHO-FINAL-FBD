@@ -81,16 +81,21 @@ CREATE TABLE album
     dt_gravacao DATE NOT NULL,
     grav_alb SMALLINT NOT NULL,
     meio_fis VARCHAR(20) NOT NULL,
+    tipo_compra VARCHAR(10) NOT NULL,
+    qtd_discos SMALLINT NULL,
 
 
     CONSTRAINT PK_cod_alb PRIMARY KEY (cod_alb),
     CONSTRAINT FK_grav_alb FOREIGN KEY (grav_alb) REFERENCES gravadora (cod_grvd),
     CONSTRAINT CK_dt_grav CHECK (dt_gravacao >= '2000-01-01'),
-    CONSTRAINT CK_meio_fis CHECK (meio_fis IN ('CD','VINIL','DOWNLOAD'))
+    CONSTRAINT CK_meio_fis CHECK (meio_fis IN ('CD','VINIL','DOWNLOAD')),
+    CONSTRAINT CK_album_tipo_compra CHECK (tipo_compra IN ('CREDITO', 'DEBITO', 'PIX', 'ESPECIE', 'BOLETO')),
+    CONSTRAINT CK_album_qtd_discos CHECK ((meio_fis = 'DOWNLOAD' AND quantidade_discos 
+    IS NULL) OR (meio_fis IN ('CD', 'VINIL') AND quantidade_discos IS NOT NULL AND quantidade_discos > 0))
 
 
 ) ON FG_GENERALDATA;
-
+ 
 CREATE TABLE tipo_composicao
 (
     cod_tipcomp SMALLINT NOT NULL,
@@ -105,7 +110,7 @@ CREATE TABLE faixa
 (
 
     num_faixa_alb SMALLINT NOT NULL,
-    num_disc_alb SMALLINT NOT NULL,
+    num_disc_alb SMALLINT NOT NULL CONSTRAINT DF_num_disc_alb DEFAULT 0,
     descriçao VARCHAR(100) NOT NULL,
     temp_exec SMALLINT,
     tipo_grav VARCHAR(3),
@@ -142,12 +147,13 @@ CREATE TABLE faixa_playlist
     cod_play SMALLINT NOT NULL,
     num_faixa_alb SMALLINT NOT NULL,
     alb_faixa SMALLINT NOT NULL,
+    num_disc_alb SMALLINT NOT NULL,
     qtd_plays SMALLINT CONSTRAINT DF_qtd_plays DEFAULT 0,
     dt_ult_play DATE,
 
-    CONSTRAINT PK_fp_faixa_play PRIMARY KEY (cod_play, num_faixa_alb, alb_faixa),
+    CONSTRAINT PK_fp_faixa_play PRIMARY KEY (cod_play, num_faixa_alb, alb_faixa, num_disc_alb),
     CONSTRAINT FK_fp_cod_play FOREIGN KEY (cod_play) REFERENCES playlist (cod_play),
-    CONSTRAINT FK_fp_faixa FOREIGN KEY (num_faixa_alb, alb_faixa) REFERENCES faixa (num_faixa_alb, alb_faixa)
+    CONSTRAINT FK_fp_faixa FOREIGN KEY (num_faixa_alb, alb_faixa, num_disc_alb) REFERENCES faixa (num_faixa_alb, alb_faixa, num_disc_alb)
 
 ) ON FG_PLAYLISTS;
 
@@ -155,11 +161,12 @@ CREATE TABLE interprete_faixa
 (
     num_faixa_alb SMALLINT NOT NULL,
     alb_faixa SMALLINT NOT NULL,
+    num_faixa_alb SMALLINT NOT NULL,
     cod_intp SMALLINT NOT NULL,
 
-    CONSTRAINT PK_if_intp_faixa PRIMARY KEY (cod_intp, num_faixa_alb, alb_faixa),
+    CONSTRAINT PK_if_intp_faixa PRIMARY KEY (cod_intp, num_faixa_alb, alb_faixa, num_faixa_alb),
     CONSTRAINT FK_if_cod_intp FOREIGN KEY (cod_intp) REFERENCES interprete (cod_intp),
-    CONSTRAINT FK_if_faixa FOREIGN KEY (num_faixa_alb, alb_faixa) REFERENCES faixa (num_faixa_alb, alb_faixa)
+    CONSTRAINT FK_if_faixa FOREIGN KEY (num_faixa_alb, alb_faixa, num_disc_alb) REFERENCES faixa (num_faixa_alb, alb_faixa, num_disc_alb)
 
 
 ) ON FG_GENERALDATA;
@@ -168,10 +175,11 @@ CREATE TABLE compositor_faixa
 (
     num_faixa_alb SMALLINT NOT NULL,
     alb_faixa SMALLINT NOT NULL,
+    num_faixa_alb SMALLINT NOT NULL,
     cod_comp SMALLINT NOT NULL,
 
-    CONSTRAINT PK_cf_comp_faixa PRIMARY KEY (cod_comp, num_faixa_alb, alb_faixa),
+    CONSTRAINT PK_cf_comp_faixa PRIMARY KEY (cod_comp, num_faixa_alb, alb_faixa, num_disc_alb),
     CONSTRAINT FK_cf_cod_comp FOREIGN KEY (cod_comp) REFERENCES compositor (cod_comp),
-    CONSTRAINT FK_cf_faixa FOREIGN KEY (num_faixa_alb, alb_faixa) REFERENCES faixa (num_faixa_alb, alb_faixa)
+    CONSTRAINT FK_cf_faixa FOREIGN KEY (num_faixa_alb, alb_faixa, num_disc_alb) REFERENCES faixa (num_faixa_alb, alb_faixa, num_disc_alb)
 
 ) ON FG_GENERALDATA;
