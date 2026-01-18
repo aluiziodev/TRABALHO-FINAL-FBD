@@ -1,0 +1,4 @@
+export DB_HOST=localhost
+export DB_USER=usuario
+export DB_PASS=senha
+export DB_NAME=meubanco

@@ -1,19 +1,18 @@
 USE BDSpotPer;
 GO
-
-CREATE VIEW dbo.vw_playlist_qtd_albuns
+CREATE VIEW [dbo].[vw_playlist_album_count]
 WITH SCHEMABINDING
 AS
-SELECT
+SELECT 
     p.cod_play,
     p.nome AS nome_playlist,
-    COUNT_BIG(*) AS qtd_albuns
-FROM dbo.playlist AS p
-JOIN dbo.faixa_playlist AS fp
-    ON p.cod_play = fp.cod_play
-GROUP BY
-    p.cod_play,
-    p.nome;
+    COUNT_BIG(DISTINCT f.alb_faixa) AS qtd_albuns
+FROM dbo.playlist p
+    JOIN dbo.faixa_playlist fp
+        ON fp.cod_play = p.cod_play
+    JOIN dbo.faixa f
+        ON f.num_faixa_alb = fp.num_faixa_alb
+    AND f.alb_faixa    = fp.alb_faixa
+    AND f.num_disc_alb = fp.num_disc_alb
+GROUP BY p.cod_play, p.nome;
 GO
-CREATE UNIQUE CLUSTERED INDEX IX_vw_playlist_qtd_albuns
-ON dbo.vw_playlist_qtd_albuns (cod_play, nome_playlist);

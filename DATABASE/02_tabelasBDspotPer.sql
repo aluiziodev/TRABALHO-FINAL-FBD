@@ -90,8 +90,8 @@ CREATE TABLE album
     CONSTRAINT CK_dt_grav CHECK (dt_gravacao >= '2000-01-01'),
     CONSTRAINT CK_meio_fis CHECK (meio_fis IN ('CD','VINIL','DOWNLOAD')),
     CONSTRAINT CK_album_tipo_compra CHECK (tipo_compra IN ('CREDITO', 'DEBITO', 'PIX', 'ESPECIE', 'BOLETO')),
-    CONSTRAINT CK_album_qtd_discos CHECK ((meio_fis = 'DOWNLOAD' AND quantidade_discos 
-    IS NULL) OR (meio_fis IN ('CD', 'VINIL') AND quantidade_discos IS NOT NULL AND quantidade_discos > 0))
+    CONSTRAINT CK_album_qtd_discos CHECK ((meio_fis = 'DOWNLOAD' AND qtd_discos 
+    IS NULL) OR (meio_fis IN ('CD', 'VINIL') AND qtd_discos IS NOT NULL AND qtd_discos > 0))
 
 
 ) ON FG_GENERALDATA;
@@ -111,7 +111,7 @@ CREATE TABLE faixa
 
     num_faixa_alb SMALLINT NOT NULL,
     num_disc_alb SMALLINT NOT NULL CONSTRAINT DF_num_disc_alb DEFAULT 0,
-    descriçao VARCHAR(100) NOT NULL,
+    descricao VARCHAR(100) NOT NULL,
     temp_exec SMALLINT,
     tipo_grav VARCHAR(3),
     alb_faixa SMALLINT NOT NULL,
@@ -161,7 +161,7 @@ CREATE TABLE interprete_faixa
 (
     num_faixa_alb SMALLINT NOT NULL,
     alb_faixa SMALLINT NOT NULL,
-    num_faixa_alb SMALLINT NOT NULL,
+    num_disc_alb SMALLINT NOT NULL,
     cod_intp SMALLINT NOT NULL,
 
     CONSTRAINT PK_if_intp_faixa PRIMARY KEY (cod_intp, num_faixa_alb, alb_faixa, num_faixa_alb),
@@ -175,7 +175,7 @@ CREATE TABLE compositor_faixa
 (
     num_faixa_alb SMALLINT NOT NULL,
     alb_faixa SMALLINT NOT NULL,
-    num_faixa_alb SMALLINT NOT NULL,
+    num_disc_alb SMALLINT NOT NULL,
     cod_comp SMALLINT NOT NULL,
 
     CONSTRAINT PK_cf_comp_faixa PRIMARY KEY (cod_comp, num_faixa_alb, alb_faixa, num_disc_alb),

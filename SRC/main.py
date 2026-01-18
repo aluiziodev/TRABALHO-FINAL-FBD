@@ -1,8 +1,10 @@
 import os  
-import pymssql
+import pymssql 
+import consultas as cons
+import playlist as pl
 
-try:
-    conn = pymssql.connect(
+def getConnection():
+    return pymssql.connect(
         server=os.getenv("DB_HOST"),
         user=os.getenv("DB_USER"),
         password=os.getenv("DB_PASS"),
@@ -10,12 +12,14 @@ try:
         port=1433,
     )
 
-    cursor = conn.cursor()
-    cursor.execute("SELECT @@VERSION")
-    row = cursor.fetchone()
 
-    print("\n CONEXÃO BEM-SUCEDIDA")
-    print("SQL Server:", row[0])
+
+try:
+    conn = getConnection()
+
+    cursor = conn.cursor()
+    pl.manutençaoPlaylist(cursor, conn)
+
 
     conn.close()
 
