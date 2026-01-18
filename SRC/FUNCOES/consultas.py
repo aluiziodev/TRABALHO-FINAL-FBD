@@ -7,33 +7,24 @@ def listarAlbuns(cursor):
                      SELECT cod_alb, descricao
                      FROM album
                    """)
-    print("\n----- ÁLBUNS -----")
     albuns = cursor.fetchall()
-    for row in albuns:
-        print("CÓDIGO:", row[0], "| DESCRIÇÃO:", row[1])
-    return [cod for cod,_ in albuns]
+    return albuns
 
 def listarFaixasAlbum(cursor, cod_alb):
     cursor.execute("""
-                     SELECT num_faixa_alb, num_disc_alb, descriçao, temp_exec
+                     SELECT alb_faixa, num_faixa_alb, num_disc_alb, descriçao, temp_exec
                      FROM faixa
                         WHERE alb_faixa = %s           
                    """, (cod_alb,))
     faixas = cursor.fetchall()
-    print(f"\n----- FAIXAS DO ÁLBUM {cod_alb} -----")
-    for row in faixas:
-        print("NÚMERO FAIXA:", row[0], "| NÚMERO DISCO:", row[1], "| DESCRIÇÃO:", row[2], "| TEMPO EXECUÇÃO:", row[3])
     return faixas
 
 def listarPlaylists(cursor):
     cursor.execute("""
-                    SELECT cod_play, nome FROM playlist
+                    SELECT * FROM playlist
                 """)
     playlists = cursor.fetchall()
-    print("\n----- PLAYLISTS -----")
-    for row in playlists:
-        print("CÓDIGO:", row[0], "| NOME:", row[1])
-    return [cod for cod,_ in playlists]
+    return playlists
 
 
 def listarFaixasPlaylist(cursor, cod_play):
@@ -44,12 +35,6 @@ def listarFaixasPlaylist(cursor, cod_play):
         WHERE fp.cod_play = %s
         """, (cod_play,))
     faixas = cursor.fetchall()
-    print(f"\n----- FAIXAS DA PLAYLIST {cod_play} -----")
-    if not faixas:
-        print("\nNenhuma faixa na playlist!!")
-    else:
-        for row in faixas:
-            print("COD ALBUM FAIXA:", row[0], "| NÚMERO FAIXA:", row[1], "| NÚMERO DISCO:", row[2], "| DESCRIÇÃO:", row[3], "| TEMPO EXECUÇÃO:", row[4])
     return faixas
                 
 def listarFaixasNplaylist(cursor, cod_play): #FAIXAS QUE NAO ESTAO NA PLAYLIST
@@ -64,12 +49,6 @@ def listarFaixasNplaylist(cursor, cod_play): #FAIXAS QUE NAO ESTAO NA PLAYLIST
                     AND fp.num_disc_alb = f.num_disc_alb)
         """, (cod_play,))
     faixas = cursor.fetchall()
-    print(f"\n----- FAIXAS DA PLAYLIST {cod_play} -----")
-    if not faixas:
-        print("\nNenhuma faixa na playlist!!")
-    else:
-        for row in faixas:
-            print("COD ALBUM FAIXA:", row[0], "| NÚMERO FAIXA:", row[1], "| NÚMERO DISCO:", row[2], "| DESCRIÇÃO:", row[3], "| TEMPO EXECUÇÃO:", row[4])
     return faixas
 
 
@@ -80,16 +59,15 @@ def consultaA(cursor):
                    WHERE preco_alb > ( SELECT AVG(preco_alb)
                                     FROM album)
                    """)
-    for row in cursor:
-        print("CÓDIGO:", row[0], "| DESCRIÇÃO:", row[1], "| PREÇO:", row[2])
-    cursor.close()
-
+    consultaA = cursor.fetchall()
+    return consultaA
+    
 
 
 def consultaB(cursor):
     cursor.execute("""
-                    SELECT g.nome AS nome_gravadora,
-                        COUNT(DISTINCT fp.cod_play) AS total_playlists
+                    SELECT g.nome as nome_gravadora,
+                        COUNT(DISTINCT fp.cod_play) as total_playlists
                     FROM gravadora g JOIN album a ON a.grav_alb = g.cod_grvd
                         JOIN faixa f ON f.alb_faixa = a.cod_alb
                         JOIN compositor_faixa cf ON cf.num_faixa_alb = f.num_faixa_alb
@@ -104,7 +82,7 @@ def consultaB(cursor):
                     HAVING COUNT(DISTINCT fp.cod_play) = (
                         SELECT MAX(qtd_playlists)
                         FROM (
-                            SELECT COUNT(DISTINCT fp2.cod_play) AS qtd_playlists
+                            SELECT COUNT(DISTINCT fp2.cod_play) as qtd_playlists
                             FROM gravadora g2
                                 JOIN album a2 ON a2.grav_alb = g2.cod_grvd
                                 JOIN faixa f2 ON f2.alb_faixa = a2.cod_alb
@@ -117,16 +95,14 @@ def consultaB(cursor):
                                     AND fp2.num_disc_alb = f2.num_disc_alb
                             WHERE c2.nome = 'Antonín Dvořák'
                             GROUP BY g2.cod_grvd
-                        ) AS sub)
+                        ) sub)
                 """)
-    
-    for row in cursor:
-        print("GRAVADORA:", row[0], "| TOTAL DE PLAYLISTS:", row[1])
-    cursor.close()
+    consultaB = cursor.fetchall()
+    return consultaB
 
 def consultaC(cursor):
     cursor.execute("""
-                    SELECT c.nome AS nome_compositor, COUNT(*) AS total_faixas
+                    SELECT c.nome as nome_compositor, COUNT(*) as total_faixas
                     FROM compositor c
                         JOIN compositor_faixa cf ON cf.cod_comp = c.cod_comp
                     JOIN faixa_playlist fp ON fp.num_faixa_alb = cf.num_faixa_alb
@@ -134,16 +110,15 @@ def consultaC(cursor):
                         AND fp.num_disc_alb = cf.num_disc_alb
                     GROUP BY c.cod_comp, c.nome
                     HAVING COUNT(*) = (SELECT MAX(qtd_faixas)
-                                        FROM (SELECT COUNT(*) AS qtd_faixas
+                                        FROM (SELECT COUNT(*) as qtd_faixas
                                             FROM compositor_faixa cf2
                                             JOIN faixa_playlist fp2 ON fp2.num_faixa_alb = cf2.num_faixa_alb
                                                 AND fp2.alb_faixa    = cf2.alb_faixa
                                                 AND fp2.num_disc_alb = cf2.num_disc_alb
-                                            GROUP BY cf2.cod_comp) AS sub)
+                                            GROUP BY cf2.cod_comp) sub)
                 """)
-    for row in cursor:
-        print("COMPOSITOR:", row[0], "| TOTAL DE FAIXAS:", row[1])
-    cursor.close()
+    consultaC = cursor.fetchall()
+    return consultaC
 
 def consultaD(cursor):
     cursor.execute("""
@@ -184,8 +159,6 @@ def consultaD(cursor):
                         )
                     )
                    """)
-    for row in cursor:
-        print("CÓDIGO PLAYLIST:", row[0], "| NOME PLAYLIST:", row[1])
-    cursor.close()
-
+    consultaD = cursor.fetchall()
+    return consultaD
 
