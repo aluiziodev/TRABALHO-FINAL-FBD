@@ -37,6 +37,9 @@ def refresh():
     tree_consulta_b.delete(*tree_consulta_b.get_children())
     tree_consulta_c.delete(*tree_consulta_c.get_children())
     tree_consulta_d.delete(*tree_consulta_d.get_children())
+    tree_consulta_view.delete(*tree_consulta_view.get_children())
+    tree_consulta_function.delete(*tree_consulta_function.get_children())
+
 
     if not item:
         return
@@ -69,9 +72,9 @@ def actionCriarPlaylist(): # Açao criar playlist
 
         faixas.append((num_faixa, num_disc, cod_alb))
 
-    playlist.criarPlaylist(cursor, conn, nome, faixas)
-    refresh()
-    refreshFaixasSelecionadas()
+    if playlist.criarPlaylist(cursor, conn, nome, faixas):
+        refresh()
+        refreshFaixasSelecionadas()
 
 
 def removerFaixaPlaylist(): # Açao remover de uma playlist
@@ -121,6 +124,12 @@ def adicionarFaixaPlaylist(): # Açao de adicionar em uma playlist
         num_disc  = int(valores[2])
         playlist.adicionarFaixa(cursor, conn, cod_play, num_faixa, cod_alb, num_disc)
     refresh()
+
+def realizaFunction():
+    nome = entry_nome_comp.get()
+    tv.carregaFunction(cursor, conn, tree_consulta_function, nome)
+
+
 
 
 # Janela principal
@@ -270,6 +279,12 @@ tk.Button(
     text="Refresh",
     command=refresh
 ).pack(side=tk.LEFT, padx=10)
+tk.Button(
+    frameBotoes,
+    text="Remover Todas as Faixas",
+    command=refreshFaixasSelecionadas
+).pack(side=tk.LEFT, padx=10)
+
 
 
 
@@ -400,6 +415,7 @@ tk.Button(
     text="Refresh",
     command=refresh
 ).pack(side=tk.LEFT, padx=10)
+
 
 
 
@@ -543,6 +559,59 @@ tree_consulta_d.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
 
 
+tk.Label(
+    frame_consultas,
+    text="Function) Álbuns do Compositor",
+    padx=10, pady=10,
+    font=("Arial", 12, "bold")
+).pack(anchor="w", padx=10, pady=(5, 0))
+
+frame_function = tk.Frame(frame_consultas, bd=1, relief=tk.SOLID)
+frame_function.pack(fill=tk.X, padx=10, pady=5)
+
+tree_consulta_function = ttk.Treeview(
+    frame_function,
+    columns=("cod_alb", "desc"),
+    show="headings"
+)
+tree_consulta_function.heading("cod_alb", text="Código")
+tree_consulta_function.heading("desc", text="Álbum")
+tree_consulta_function.pack(fill=tk.BOTH, expand=True, pady=5)
+
+scroll_y = ttk.Scrollbar(frame_function, orient="vertical", command=tree_consulta_function.yview)
+tree_consulta_function.configure(yscrollcommand=scroll_y.set)
+scroll_y.pack(side=tk.RIGHT, fill=tk.Y)
+tree_consulta_function.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
+
+
+tk.Label(
+    frame_consultas,
+    text="View) Playlists e seus Álbuns",
+    padx=10, pady=10,
+    font=("Arial", 12, "bold")
+).pack(anchor="w", padx=10, pady=(5, 0))
+
+frame_view = tk.Frame(frame_consultas, bd=1, relief=tk.SOLID)
+frame_view.pack(fill=tk.X, padx=10, pady=5)
+
+tree_consulta_view = ttk.Treeview(
+    frame_view,
+    columns=("cod_play", "nome", "qtd_albuns"),
+    show="headings"
+)
+tree_consulta_view.heading("cod_play", text="Código")
+tree_consulta_view.heading("nome", text="Playlist")
+tree_consulta_view.heading("qtd_albuns", text="Qtd Álbuns")
+tree_consulta_view.pack(fill=tk.BOTH, expand=True, pady=5)
+
+scroll_y = ttk.Scrollbar(frame_view, orient="vertical", command=tree_consulta_view.yview)
+tree_consulta_view.configure(yscrollcommand=scroll_y.set)
+scroll_y.pack(side=tk.RIGHT, fill=tk.Y)
+tree_consulta_view.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
+
+
 tk.Button(
     frame_a,
     text="Executar Consulta",
@@ -562,6 +631,19 @@ tk.Button(
     frame_d,
     text="Executar Consulta",
     command=lambda: tv.carregaConsultaD(cursor, tree_consulta_d)
+).pack(anchor="w")
+tk.Label(frame_function, text="Nome do Compositor:").pack(pady=5)
+entry_nome_comp = tk.Entry(frame_function)
+entry_nome_comp.pack(pady=5)
+tk.Button(
+    frame_function,
+    text="Executar Consulta",
+    command=realizaFunction
+).pack(anchor="w")
+tk.Button(
+    frame_view,
+    text="Executar Consulta",
+    command=lambda: tv.carregaView(cursor, tree_consulta_view)
 ).pack(anchor="w")
 tk.Button(
     tab_consultas,

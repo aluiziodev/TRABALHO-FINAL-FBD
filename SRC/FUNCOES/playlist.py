@@ -10,11 +10,11 @@ def criarPlaylist(cursor, conn, nomePlaylist, faixasSelecionadas):
 
     if not nomePlaylist:
         messagebox.showerror("Erro", "Informe o nome da playlist")
-        return
+        return False
 
     if not faixasSelecionadas:
         messagebox.showerror("Erro", "Selecione pelo menos uma faixa")
-        return
+        return False
     
     try:
         cursor.execute("""
@@ -44,6 +44,7 @@ def criarPlaylist(cursor, conn, nomePlaylist, faixasSelecionadas):
             "Sucesso",
             f"Playlist '{nomePlaylist}' criada com sucesso!"
         )
+        return True
 
     except Exception as e:
         conn.rollback()

@@ -162,3 +162,21 @@ def consultaD(cursor):
     consultaD = cursor.fetchall()
     return consultaD
 
+def function(cursor, nome):
+    cursor.execute("""
+                    SELECT cod_alb, descricao
+                    FROM dbo.function_albuns_compositor(%s)
+            """, (nome, ))
+    albuns = cursor.fetchall()
+    return albuns
+
+def view(cursor):
+    cursor.execute("""
+                SELECT cod_play, nome_playlist, qtd_albuns
+                FROM dbo.vw_playlist_album_count
+                ORDER BY nome_playlist
+            """)
+    
+    playlists = cursor.fetchall()
+    return playlists
+

@@ -144,3 +144,35 @@ BEGIN
         ON p.cod_play = t.cod_play;
 END;
 GO
+
+CREATE TRIGGER trg_faixa_playlist_atualiza_tempo_del
+ON faixa_playlist
+AFTER DELETE
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    UPDATE p
+    SET p.temp_exec = 
+        CASE
+            WHEN p.temp_exec - t.soma_tempo < 0 THEN 0
+            ELSE p.temp_exec - t.soma_tempo
+        END
+    FROM playlist p
+    JOIN (
+        SELECT
+            d.cod_play,
+            SUM(f.temp_exec) AS soma_tempo
+        FROM deleted d
+        JOIN faixa f
+            ON f.num_faixa_alb = d.num_faixa_alb
+           AND f.alb_faixa     = d.alb_faixa
+           AND (
+                (f.num_disc_alb = d.num_disc_alb)
+                OR (f.num_disc_alb IS NULL AND d.num_disc_alb IS NULL)
+           )
+        GROUP BY d.cod_play
+    ) t
+        ON p.cod_play = t.cod_play;
+END;
+GO

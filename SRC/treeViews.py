@@ -101,6 +101,32 @@ def carregaConsultaD(cursor, tree_consulta_d):
     for item in consulta:
         tree_consulta_d.insert("", tk.END, values=item)
 
+def carregaFunction(cursor, conn, tree_consulta_function, nome):
+    if not nome:
+        messagebox.showwarning(
+            "Atenção",
+            "Informe o nome do compositor."
+        )
+        return
+
+    try:
+        tree_consulta_function.delete(*tree_consulta_function.get_children())
+        resultados = cons.function(cursor, nome)
+        if not resultados:
+            messagebox.showinfo(
+                "Resultado",
+                "Nenhum álbum encontrado para esse compositor."
+            )
+            return
+        for item in resultados:
+            tree_consulta_function.insert("", tk.END, values=item)
+    except Exception as e:
+        conn.rollback()
+        messagebox.showerror("Erro", str(e))
 
 
-
+def carregaView(cursor, tree_consulta_view):
+    tree_consulta_view.delete(*tree_consulta_view.get_children())
+    consulta = cons.view(cursor)
+    for item in consulta:
+        tree_consulta_view.insert("", tk.END, values=item)
