@@ -54,7 +54,7 @@ VALUES
 
 
 INSERT INTO faixa
-(num_faixa_alb, num_disc_alb, descriçao, temp_exec, tipo_grav, alb_faixa, tipo_comp)
+(num_faixa_alb, num_disc_alb, descricao, temp_exec, tipo_grav, alb_faixa, tipo_comp)
 VALUES
 
 (1, 1, 'Symphony No.9 – I', 900, 'DDD', 1, 1),

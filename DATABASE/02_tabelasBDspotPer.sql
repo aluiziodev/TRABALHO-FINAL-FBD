@@ -164,7 +164,7 @@ CREATE TABLE interprete_faixa
     num_disc_alb SMALLINT NOT NULL,
     cod_intp SMALLINT NOT NULL,
 
-    CONSTRAINT PK_if_intp_faixa PRIMARY KEY (cod_intp, num_faixa_alb, alb_faixa, num_faixa_alb),
+    CONSTRAINT PK_if_intp_faixa PRIMARY KEY (cod_intp, num_faixa_alb, alb_faixa),
     CONSTRAINT FK_if_cod_intp FOREIGN KEY (cod_intp) REFERENCES interprete (cod_intp),
     CONSTRAINT FK_if_faixa FOREIGN KEY (num_faixa_alb, alb_faixa, num_disc_alb) REFERENCES faixa (num_faixa_alb, alb_faixa, num_disc_alb)
 

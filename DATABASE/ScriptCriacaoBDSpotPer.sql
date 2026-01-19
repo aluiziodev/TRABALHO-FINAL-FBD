@@ -212,7 +212,7 @@ CREATE TABLE interprete_faixa
     num_disc_alb SMALLINT NOT NULL,
     cod_intp SMALLINT NOT NULL,
 
-    CONSTRAINT PK_if_intp_faixa PRIMARY KEY (cod_intp, num_faixa_alb, alb_faixa, num_faixa_alb),
+    CONSTRAINT PK_if_intp_faixa PRIMARY KEY (cod_intp, num_faixa_alb, alb_faixa),
     CONSTRAINT FK_if_cod_intp FOREIGN KEY (cod_intp) REFERENCES interprete (cod_intp),
     CONSTRAINT FK_if_faixa FOREIGN KEY (num_faixa_alb, alb_faixa, num_disc_alb) REFERENCES faixa (num_faixa_alb, alb_faixa, num_disc_alb)
 
@@ -550,7 +550,7 @@ VALUES
 
 
 INSERT INTO faixa
-(num_faixa_alb, num_disc_alb, descriçao, temp_exec, tipo_grav, alb_faixa, tipo_comp)
+(num_faixa_alb, num_disc_alb, descricao, temp_exec, tipo_grav, alb_faixa, tipo_comp)
 VALUES
 
 (1, 1, 'Symphony No.9 – I', 900, 'DDD', 1, 1),
