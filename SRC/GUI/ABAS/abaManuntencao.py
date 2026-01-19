@@ -127,7 +127,7 @@ def criarTabManutencao(tab_control, cursor, conn):
     tk.Button(
         frameBotoes2,
         text="Adicionar Faixa na playlist",
-        command=lambda e: ct.adicionarFaixaPlaylist(e, tree_playlists,
+        command=lambda: ct.adicionarFaixaPlaylist(None, tree_playlists,
                                                 tree_faixas_dispon,
                                                 tree_faixas_playlist,
                                                 cursor,
@@ -145,7 +145,7 @@ def criarTabManutencao(tab_control, cursor, conn):
     tk.Button(
         frameBotoes2,
         text="Refresh",
-        command=lambda: ct.refreshPlaylist(tree_playlists,
+        command=lambda: ct.refreshManutencao(tree_playlists,
                                    tree_faixas_playlist,
                                    tree_faixas_dispon,
                                    cursor)

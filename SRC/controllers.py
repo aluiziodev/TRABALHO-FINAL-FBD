@@ -68,6 +68,20 @@ def refreshPlaylist(tree_playlists,
             cursor
         )
 
+def refreshManutencao(
+        tree_playlists,
+        tree_faixas_playlist,
+        tree_faixas_dispon,
+        cursor):
+    tree_playlists.selection_remove(tree_playlists.selection())
+    tree_playlists.focus_set()  
+
+    tree_faixas_playlist.delete(*tree_faixas_playlist.get_children())
+    tree_faixas_dispon.delete(*tree_faixas_dispon.get_children())
+
+    tree_playlists.delete(*tree_playlists.get_children())
+    tv.carregaPlaylist(cursor, tree_playlists)
+
     
 
 def refreshFaixasSelecionadas(tree_faixas_selecionadas):
