@@ -1,16 +1,16 @@
 # TRABALHO-FINAL-FBD (BDSpotPer)
-Trabalho final da disciplina fundamentos de banco de dados 2025.2, ministrada pelo professor Ângelo Brayner, Professor do Departamento de Computaçao da Universidade Federal do Ceara (UFC-DC).
+Trabalho final da disciplina de Fundamentos de Bancos de Dados 2025.2, ministrada pelo professor Ângelo Brayner, Professor do Departamento de Computaçao da Universidade Federal do Ceara (UFC-DC).
 
 ---
 
 ## Equipe
 
-- Jonathan duarte uchoa
-- Aluizio pereira almendra neto
+- Jonathan Duarte Uchoa
+- Aluizio Pereira Almendra Neto
 
 ---
 ## Requisitos
-- Acesso ao sql server (sgbd utilizado)
+- Acesso ao SQL Server (sgbd utilizado)
 - Python instalado no ambiente de execução
 - Instalação dos frameworks python:
  - Tkinter (Nativo do python)
