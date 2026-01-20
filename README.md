@@ -21,7 +21,7 @@ Trabalho final da disciplina de Fundamentos de Bancos de Dados 2025.2, ministrad
 ## Como rodar?
 
 
-Passo a passo de como rodar a interface gráfica interativa do ShopPer, dado todos os requisitos listados acima.
+Passo a passo de como rodar a interface gráfica interativa do SpotPer, dado todos os requisitos listados acima.
 
 
 1. Inicialize o banco de dados executando os scripts da pasta DATABASE📂, onde você pode executar um a um os scripts numerados em sequência crescente, ou executar o script no arquivo ```ScriptCriacaoBDSpotPer.sql```.
