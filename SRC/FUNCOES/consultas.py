@@ -12,7 +12,7 @@ def listarAlbuns(cursor):
 
 def listarFaixasAlbum(cursor, cod_alb):
     cursor.execute("""
-                     SELECT alb_faixa, num_faixa_alb, num_disc_alb, descriçao, temp_exec
+                     SELECT alb_faixa, num_faixa_alb, num_disc_alb, descricao, temp_exec
                      FROM faixa
                         WHERE alb_faixa = %s           
                    """, (cod_alb,))
@@ -29,7 +29,7 @@ def listarPlaylists(cursor):
 
 def listarFaixasPlaylist(cursor, cod_play):
     cursor.execute("""
-        SELECT f.alb_faixa, f.num_faixa_alb, f.num_disc_alb, f.descriçao, f.temp_exec
+        SELECT f.alb_faixa, f.num_faixa_alb, f.num_disc_alb, f.descricao, f.temp_exec
         FROM faixa_playlist fp
         JOIN faixa f ON fp.num_faixa_alb = f.num_faixa_alb AND fp.alb_faixa = f.alb_faixa AND fp.num_disc_alb = f.num_disc_alb
         WHERE fp.cod_play = %s
@@ -39,7 +39,7 @@ def listarFaixasPlaylist(cursor, cod_play):
                 
 def listarFaixasNplaylist(cursor, cod_play): #FAIXAS QUE NAO ESTAO NA PLAYLIST
     cursor.execute("""
-            SELECT f.alb_faixa, f.num_faixa_alb, f.num_disc_alb, f.descriçao, f.temp_exec
+            SELECT f.alb_faixa, f.num_faixa_alb, f.num_disc_alb, f.descricao, f.temp_exec
             FROM faixa f
             WHERE NOT EXISTS (
                 SELECT *
